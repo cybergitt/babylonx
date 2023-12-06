@@ -143,6 +143,9 @@ services:
   rabbitmq:
     image: rabbitmq:${RABBITMQ_SERVER}
     hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     ports:
       - "${LOCAL_LISTEN_ADDR}${RABBITMQ_MAIN_PORT:-5672}:5672"
       - "${LOCAL_LISTEN_ADDR}${RABBITMQ_MANAGEMENT_CONSOLE_PORT:-15672}:15672"
