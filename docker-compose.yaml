@@ -71,12 +71,7 @@ services:
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+    restart: unless-stopped
     networks:
       - app_net
     depends_on:
@@ -138,6 +133,26 @@ services:
     hostname: mailhog
     ports:
       - "${LOCAL_LISTEN_ADDR}${HOST_PORT_MAILHOG:-8025}:8025"
+      - "${LOCAL_LISTEN_ADDR}1025:1025"
+    networks:
+      - app_net
+
+  # ------------------------------------------------------------
+  # RabbitMQ
+  # ------------------------------------------------------------
+  rabbitmq:
+    image: rabbitmq:${RABBITMQ_SERVER}
+    hostname: rabbitmq
+    ports:
+      - "${LOCAL_LISTEN_ADDR}${RABBITMQ_MAIN_PORT:-5672}:5672"
+      - "${LOCAL_LISTEN_ADDR}${RABBITMQ_MANAGEMENT_CONSOLE_PORT:-15672}:15672"
+    volumes:
+      # ---- Format: ----
+      # HOST-DIRECTORY : DOCKER-DIRECTORY
+
+      # Mount RabbitMQ Data directory
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - app_net
 
